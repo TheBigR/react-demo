@@ -80,12 +80,24 @@ function HomePage() {
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Login attempt with email: ${email}`);
-    // For now, just show an alert. Later we'll add real authentication.
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // For now, just simulate a login with the email
+      // Later we can add real authentication
+      alert(`Login attempt with email: ${email}`);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.error || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -94,6 +106,11 @@ function LoginPage() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="max-w-md mx-auto bg-white shadow rounded-lg p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Login</h2>
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -105,22 +122,13 @@ function LoginPage() {
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
             <div className="flex space-x-3">
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50"
               >
-                Login
+                {isLoading ? 'Logging in...' : 'Login'}
               </button>
               <button
                 type="button"
